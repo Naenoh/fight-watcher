@@ -1,5 +1,5 @@
 # Shamelessly stolen from https://github.com/nficano/pytube/issues/180#issuecomment-363529167
-
+# itags: 135 for 480p mp4 video, 242 for 408 webm video
 import multiprocessing as mp
 from math import ceil
 

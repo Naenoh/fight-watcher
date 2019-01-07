@@ -14,7 +14,7 @@ def open_video(videopath):
             gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
         except cv.error:
             break
-        if find_timer(gray, template):
+        if find_timer(gray, template) > 0.94:
             round_count += 1
             cv.imwrite("outputs/ress" + str(round_count) + ".jpg", gray)
             skip_frames(cap, frame_count, 600)
@@ -32,14 +32,15 @@ def find_timer(img, template):
     # Apply template Matching
     res = cv.matchTemplate(img,template,cv.TM_CCORR_NORMED)
     min_val, max_val, min_loc, max_loc = cv.minMaxLoc(res)
-    return max_val > 0.94
+    return max_val
 
 def find_timer_all_methods(imgpath, templatepath):
     template = cv.imread(templatepath,0)
     w, h = template.shape[::-1]
     # All the 6 methods for comparison in a list
-    methods = ['cv.TM_CCOEFF', 'cv.TM_CCOEFF_NORMED','cv.TM_CCORR',
-                'cv.TM_CCORR_NORMED', 'cv.TM_SQDIFF', 'cv.TM_SQDIFF_NORMED']
+    #methods = ['cv.TM_CCOEFF', 'cv.TM_CCOEFF_NORMED','cv.TM_CCORR',
+    #            'cv.TM_CCORR_NORMED', 'cv.TM_SQDIFF', 'cv.TM_SQDIFF_NORMED']
+    methods = ['cv.TM_CCORR_NORMED']
     img = cv.imread(imgpath,0)
     img2 = img.copy()
     for meth in methods:
