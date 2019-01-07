@@ -5,7 +5,7 @@ import time
 
 def open_video(videopath):
     cap = cv.VideoCapture(videopath)
-    template = cv.imread("inputs/template4.png", 0)
+    template = cv.imread("inputs/xrdTemplate.png", 0)
     frame_count = 0
     round_count = 0
     while(cap.isOpened()):
@@ -16,16 +16,16 @@ def open_video(videopath):
             break
         if find_timer(gray, template):
             round_count += 1
-            cv.imwrite("outputs/res" + str(round_count) + ".jpg", gray)
-            skip_frames(cap, 600)
+            cv.imwrite("outputs/ress" + str(round_count) + ".jpg", gray)
+            skip_frames(cap, frame_count, 600)
             frame_count += 600
-        skip_frames(cap, 26)
+        skip_frames(cap, frame_count, 26)
         frame_count += 27
     cap.release()
     cv.destroyAllWindows()
 
-def skip_frames(cap, n):
-    for i in range(0, n):
+def skip_frames(cap, current_frame, n):
+     for i in range(0, n):
         cap.grab()
 
 def find_timer(img, template):
