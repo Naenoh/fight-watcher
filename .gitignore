@@ -1,5 +1,6 @@
-inputs/*.mp4
-inputs/*.webm
+*.mp4
+*.webm
+inputs
 outputs
 
 # Byte-compiled / optimized / DLL files

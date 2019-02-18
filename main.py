@@ -1,25 +1,31 @@
 
-from imgproc import find_timer, open_video, find_timer_all_methods
+from imgproc import open_video
 import time
 import cv2 as cv
+import sys
 from videodl import download_video
 
+def matches_to_sql(outputname, matches, url, date):
+    with open(outputname, 'w') as output:
+        output.write("INSERT INTO unisttv.matches (playerone, playertwo, link, upload_date) values \n")
+        lines = []
+        for (p1, p2, seconds) in matches:
+            minutes, seconds = divmod(seconds, 60)
+            hours, minutes = divmod(minutes, 60)
+            lines.append(f"('{p1}','{p2}','{url}&t={hours}h{minutes}m{seconds}s', '{date}')")
+        output.write(",\n".join(lines))
+        output.write(";")
+
 if __name__ == '__main__':
-    p1 = ["inputs/xrdp1r0.png", "inputs/xrdp1r1.png", "inputs/xrdp1r2.png"]
-    p2 = ["inputs/xrdp2r0.png", "inputs/xrdp2r1.png", "inputs/xrdp2r2.png"]
-    inputs = ["inputs/00.jpg", "inputs/01.jpg", "inputs/12.jpg", "inputs/20.jpg"]
+    if len(sys.argv) < 2:
+        print("usage : python main.py <yt link to video>")
+        exit()
     start = time.time()
-    for inp in inputs:
-        print("----------" + inp)
-        img = cv.imread(inp, 0)
-        print("P1", end = " ")
-        for score in p1:
-            template = cv.imread(score, 0)
-            print(find_timer(img, template), end=" ")
-        print("\nP2", end = " ")
-        for score in p2:
-            template = cv.imread(score, 0)
-            print(find_timer(img, template), end=" ")
-        print()
+    folder = 'inputs/unist/'
+    url, upload_date = download_video(sys.argv[1], folder)
+    formatted_date = f'{upload_date[0:4]}-{upload_date[4:6]}-{upload_date[6:8]}'
+    matches = open_video(folder + upload_date + '.mp4')
+    matches_to_sql(f'outputs/unist/{formatted_date}.sql', matches, url, formatted_date)
     end = time.time()
-    print(end - start)
+    print("Processing took : " + str(end - start) + "s")
+    
