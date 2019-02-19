@@ -12,6 +12,7 @@ char_list = ["Hyde", "Linne", "Waldstein", "Carmine", "Orie", "Gordeau", "Merkav
 
 def open_video(videopath):
     cap = cv.VideoCapture(videopath)
+    framerate = cap.get(cv.CAP_PROP_FPS)
     frame_count = 0
     round_count = 0
     matches = []
@@ -24,10 +25,10 @@ def open_video(videopath):
             skip_frames(cap, frame_count, 5)
             frame = get_frame(cap)
             frame_count += 6
-            roundstart_frame = frame_count
             if frame is None:
                 break
             if find_unist_roundstart(frame, round_count) and find_unist_rounds(frame) == (0, 0):
+                roundstart_frame = frame_count
                 round_count += 1
                 cv.imwrite(f"outputs/unist/{round_count}.jpg", frame)
                 p1, p2 = extract_p1(frame), extract_p2(frame)
@@ -46,7 +47,7 @@ def open_video(videopath):
                         p1 = ask_manually(frame, "p1 : ")
                     if  p2 == "":
                         p2 = ask_manually(frame, "p2 : ")
-                seconds = floor(roundstart_frame / 30)
+                seconds = floor(roundstart_frame / framerate)
                 matches.append([p1, p2, seconds])
                 skip_frames(cap, frame_count, 600)
                 frame_count += 600
